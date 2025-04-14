@@ -13,7 +13,8 @@ public class ComplaintLoaderTest {
     public void testLoadComplaintsWithEmbeddings() throws Exception {
         List<Complaint> complaints = ComplaintLoader.loadComplaintsWithEmbeddings(
                 "/complaints_sample_1_30.csv",
-                "/embeddings_sample_1_30.jsonl"
+                "/embeddings_sample_1_30_jsonl_strict_fixed.jsonl"
+
         );
 
         assertNotNull(complaints, "Complaint list should not be null");

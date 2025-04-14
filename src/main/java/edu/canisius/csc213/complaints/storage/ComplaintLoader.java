@@ -24,7 +24,44 @@ public class ComplaintLoader {
      * @throws Exception if file reading or parsing fails
      */
     public static List<Complaint> loadComplaintsWithEmbeddings(String csvPath, String jsonlPath) throws Exception {
-        // TODO: Load CSV and JSONL resources, parse, and return hydrated Complaint list
-        return List.of(); // placeholder
+        // Load CSV resource
+        InputStream csvStream = ComplaintLoader.class.getResourceAsStream(csvPath);
+        if (csvStream == null) {
+            System.err.println("❌ Could not load CSV resource: " + csvPath);
+            throw new IllegalArgumentException("CSV resource not found.");
+        } else {
+            System.out.println("✅ CSV file found: " + csvPath);
+        }
+
+        // Load JSONL resource
+        InputStream jsonlStream = ComplaintLoader.class.getResourceAsStream(jsonlPath);
+        if (jsonlStream == null) {
+            System.err.println("❌ Could not load JSONL resource: " + jsonlPath);
+            throw new IllegalArgumentException("JSONL resource not found.");
+        } else {
+            System.out.println("✅ JSONL file found: " + jsonlPath);
+        }
+
+        // Parse complaints from CSV
+        InputStreamReader csvReader = new InputStreamReader(csvStream, StandardCharsets.UTF_8);
+        List<Complaint> complaints = new CsvToBeanBuilder<Complaint>(csvReader)
+                .withType(Complaint.class)
+                .withIgnoreLeadingWhiteSpace(true)
+                .build()
+                .parse();
+        System.out.println("✅ Loaded " + complaints.size() + " complaints from CSV.");
+
+        // Load embeddings
+        Map<Long, double[]> embeddings = EmbeddingLoader.loadEmbeddings(jsonlStream);
+        System.out.println("✅ Loaded " + embeddings.size() + " embeddings from JSONL.");
+
+        // Merge them
+        ComplaintMerger.mergeEmbeddings(complaints, embeddings);
+        System.out.println("✅ Embeddings successfully merged into complaints.");
+
+        return complaints;
     }
 }
+
+
+
