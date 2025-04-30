@@ -1,26 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>Search Results</title>
 </head>
 <body>
-<h1>🔍 Search Complaints by Company</h1>
+    <h1>Search Complaints by Company</h1>
 
-<form method="get" action="/search">
-    <input type="text" name="company" placeholder="Enter company name..." th:value="${companySearch}" />
-    <button type="submit">Search</button>
-</form>
+    <form method="get" action="/search">
+        <input type="text" name="company" placeholder="Enter company name..." th:value="${company}" />
+        <button type="submit">Search</button>
+    </form>
 
-<p th:if="${error != null}" th:text="${error}" style="color: red;"></p>
+    <p th:if="${error != null}" th:text="${error}" style="color: red;"></p>
 
-<ul th:if="${searchResults != null}">
-    <li th:each="complaint : ${searchResults}">
-        <strong th:text="'Complaint ID: ' + ${complaint.complaintId}"></strong> —
-        <span th:text="${complaint.narrative}"></span>
-    </li>
-</ul>
+    <div th:if="${results != null}">
+        <h2 th:if="${results.size() > 0}">Results:</h2>
+        <ul>
+            <li th:each="complaint : ${results}">
+                <strong th:text="'Complaint ID: ' + ${complaint.complaintId}"></strong> —
+                <em th:text="${#strings.abbreviate(complaint.narrative, 200)}"></em>
+            </li>
+        </ul>
+    </div>
 
-<a href="/complaint">Back to Viewer</a>
+    <p><a href="/complaint">Back to Viewer</a></p>
 </body>
 </html>
 
